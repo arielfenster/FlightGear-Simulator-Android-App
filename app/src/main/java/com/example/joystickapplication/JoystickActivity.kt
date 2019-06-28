@@ -5,14 +5,18 @@ import android.os.Bundle
 
 class JoystickActivity : AppCompatActivity() {
 
-    
-
-
+    private val client : Client
+    private var joystickView : JoystickView
+    private var isTouchingJoystick : Boolean
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_joystick)
+        this.joystickView = JoystickView(this)
+        setContentView(this.joystickView)
+
+
+
     }
 
 
