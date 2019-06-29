@@ -13,11 +13,11 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
     }
 
-    fun startConnection(view: View): Unit {
+    fun startConnection(view: View) {
         val ip = findViewById<EditText>(R.id.editTextIP).text.toString()
         val port = findViewById<EditText>(R.id.editTextPort).text.toString()
 
-        val intent = Intent(this, ConnectionActivity::class.java)
+        val intent = Intent(this, JoystickActivity::class.java)
         intent.putExtra("ip", ip)
         intent.putExtra("port", port)
         startActivity(intent)

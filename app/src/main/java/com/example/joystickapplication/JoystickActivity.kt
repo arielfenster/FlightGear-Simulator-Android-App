@@ -3,25 +3,41 @@ package com.example.joystickapplication
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MotionEvent
+import java.lang.Math.toRadians
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
 import kotlin.math.sqrt
 
-
+/**
+ * The class is responsible for the logic of moving and showing the joystick
+ */
 class JoystickActivity : AppCompatActivity() {
 
-    private val client: Client = Client()
-    private var joystickView: JoystickView
-    private var isTouchingJoystick: Boolean
-
-    init {
-        this.joystickView = JoystickView(this)
-        this.isTouchingJoystick = false
-    }
+    private lateinit var client: Client
+    private lateinit var joystickView: JoystickView
+    private var isTouchingJoystick: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.joystickView = JoystickView(this)
+        this.isTouchingJoystick = false
         setContentView(this.joystickView)
+
+        val intent = intent
+        val ip = intent.getStringExtra("ip")!!
+        val port = intent.getStringExtra("port")?.toInt()!!
+        this.client = Client()
+        this.client.connect(ip, port)
     }
 
+    /**
+     * The function is called whenever the user is interacting with the screen.
+     * Is responsible for the joystick-moving logic.
+     *
+     * @param event - the gesture the user acted on the screen
+     * @return true if a relevant action was performed, false otherwise
+     */
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val action = event!!.action
         val touchX = event.x
@@ -47,31 +63,40 @@ class JoystickActivity : AppCompatActivity() {
                 if (magnitude >= 1) {
                     magnitude = 1F
                 }
+
+                // calculate the values of the arguments and send them
                 val angle = this.getAngle(
                     (touchX - this.joystickView.centerX).toDouble(),
                     (touchY - this.joystickView.centerY).toDouble()
                 )
-                val elevator: String = (Math.sin(Math.toRadians(angle)) * magnitude * -1).toString()
-                val aileron: String = (Math.cos(Math.toRadians(angle)) * magnitude).toString()
+                val elevator: Float = (sin(toRadians(angle)) * magnitude * -1).toFloat()
+                val aileron: Float = (cos(toRadians(angle)) * magnitude).toFloat()
 
-                this.client.sendCommand("elevator", elevator)
-                this.client.sendCommand("aileron", aileron)
+                this.client.sendCommand("elevator", elevator.toString())
+                this.client.sendCommand("aileron", aileron.toString())
 
                 // draw the new position
                 val newPos = this.getAdjustedPosition(touchX, touchY, angle, distance)
-                this.joystickView.currX = newPos[0]
-                this.joystickView.currY = newPos[1]
+                this.updateJoystickPosition(newPos[0], newPos[1])
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                this.joystickView.currX = this.joystickView.centerX
-                this.joystickView.currY = this.joystickView.centerY
+                // place the joystick in its original position
+                this.updateJoystickPosition(this.joystickView.centerX, this.joystickView.centerY)
                 this.isTouchingJoystick = false
             }
         }
+        this.joystickView.postInvalidate()
         return true
     }
 
+    /**
+     * Checking if a touch-gesture position is inside the joystick
+     *
+     * @param touchX - the x coordinate of the touching point
+     * @param touchY - the y coordinate of the touching point
+     * @return true if the distance from the position to the center is less or equal to the radius, false otherwise
+     */
     private fun isInsideJoystick(touchX: Float, touchY: Float): Boolean {
         return this.distance(
             touchX,
@@ -81,10 +106,26 @@ class JoystickActivity : AppCompatActivity() {
         ) <= this.joystickView.innerRadius
     }
 
+    /**
+     * Calculating the distance between two points
+     *
+     * @param x1 - x coordinate of point 1
+     * @param y1 - y coordinate of point 1
+     * @param x2 - x coordinate of point 2
+     * @param y2 - y coordinate of point 2
+     * @return the distance between the points
+     */
     private fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-        return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
+        return sqrt((x1 - x2).pow(2) + (y1 - y2).pow(2))
     }
 
+    /**
+     * Calculating the angle between two points using the differences in x and y values
+     *
+     * @param dx - change in x coordinates between two points
+     * @param dy - change in y coordinate between two points
+     * @return the angle between the two points
+     */
     private fun getAngle(dx: Double, dy: Double): Double {
         if (dx >= 0 && dy >= 0) return Math.toDegrees(Math.atan(dy / dx))
         else if (dx < 0 && dy >= 0) return Math.toDegrees(Math.atan(dy / dx)) + 180
@@ -93,6 +134,15 @@ class JoystickActivity : AppCompatActivity() {
         return 0.0
     }
 
+    /**
+     * Correcting the touching position if occurred outside the joystick
+     *
+     * @param touchX             - the x coordinate of the touching point
+     * @param touchY             - the y coordinate of the touching point
+     * @param angle              - the angle between the touching point and the center of the joystick
+     * @param distanceFromCenter - the distance from the center
+     * @return the original position if its inside the joystick, otherwise a point on the outer circumference
+     */
     private fun getAdjustedPosition(
         touchX: Float,
         touchY: Float,
@@ -103,10 +153,15 @@ class JoystickActivity : AppCompatActivity() {
             return arrayOf(touchX, touchY)
         }
         val newX =
-            this.joystickView.centerX + Math.cos(Math.toRadians(angle)) * (joystickView.outerRadius - joystickView.innerRadius)
+            this.joystickView.centerX + cos(toRadians(angle)) * (joystickView.outerRadius - joystickView.innerRadius)
         val newY =
-            this.joystickView.centerY + Math.cos(Math.toRadians(angle)) * (joystickView.outerRadius - joystickView.innerRadius)
+            this.joystickView.centerY + sin(toRadians(angle)) * (joystickView.outerRadius - joystickView.innerRadius)
         return arrayOf(newX.toFloat(), newY.toFloat())
+    }
+
+    private fun updateJoystickPosition(newX: Float, newY: Float) {
+        this.joystickView.currX = newX
+        this.joystickView.currY = newY
     }
 
     override fun onDestroy() {
