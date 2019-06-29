@@ -6,16 +6,20 @@ import java.io.OutputStream
 import java.lang.Exception
 import java.net.Socket
 
-class Client(private val socket: Socket?, private val outStream: OutputStream?) {
+class Client {
     private val paths: Map<String, String>
-//    private val socket : Socket
-//    private val outputStream : OutputStream
+    private val socket : Socket
+    private val outStream : OutputStream
 
     init {
         this.paths = mapOf(
             "AILERON" to "/controls/flight/aileron",
             "ELEVATOR" to "/controls/flight/elevator"
         )
+    }
+
+    fun connect(ip : String, port : Int) {
+
     }
 
     fun sendCommand(parameter: String, value: String) {

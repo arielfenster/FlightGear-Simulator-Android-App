@@ -21,7 +21,7 @@ class ConnectionActivity : AppCompatActivity() {
         val loginIntent = intent
         val ip = loginIntent.getStringExtra("ip")
         val port = loginIntent.getStringExtra("port")
-        val joystickIntent = ConnectTask().execute(ip,port).get()
+        val joystickIntent = ConnectTask(this).execute(ip,port).get()
 
     }
 

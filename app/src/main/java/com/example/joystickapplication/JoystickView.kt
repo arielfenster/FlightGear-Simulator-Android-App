@@ -13,12 +13,18 @@ class JoystickView(context: Context) : View(context) {
     private val innerColor: Paint
     private val backgroundColor: Paint
 
-    private var centerX: Float
-    private var centerY: Float
-    private var currX: Float
-    private var currY: Float
-    private var outerRadius: Float
-    private var innerRadius: Float
+    var centerX: Float
+        private set
+    var centerY: Float
+        private set
+
+    var currX: Float
+    var currY: Float
+
+    var outerRadius: Float
+        private set
+    var innerRadius: Float
+        private set
 
     private var statusBarHeight: Float
 
@@ -84,21 +90,21 @@ class JoystickView(context: Context) : View(context) {
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
-    fun getCurrX(): Float = this.currX
-    fun getCurrY(): Float = this.currY
-    fun isOrientationChanged(): Boolean = this.isOrientationChanged
+//    fun getCurrX(): Float = this.currX
+//    fun getCurrY(): Float = this.currY
+//    fun isOrientationChanged(): Boolean = this.isOrientationChanged
 
     fun getOuterJoystickArgs(): Array<Float> {
         return arrayOf(centerX, centerY, outerRadius, innerRadius)
     }
 
-    fun setCurrX(x: Float) {
-        this.currX = x
-    }
+//    fun setCurrX(x: Float) {
+//        this.currX = x
+//    }
 
-    fun setCurrY(y: Float) {
-        this.currY = y
-    }
+//    fun setCurrY(y: Float) {
+//        this.currY = y
+//    }
 
     fun notifyArgsUpdated() {
         this.isOrientationChanged = false
