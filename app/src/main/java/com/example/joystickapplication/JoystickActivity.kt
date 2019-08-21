@@ -81,8 +81,10 @@ class JoystickActivity : AppCompatActivity() {
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                // place the joystick in its original position
+                // place both the joystick and the aircraft's steering handles in the center
                 this.updateJoystickPosition(this.joystickView.centerX, this.joystickView.centerY)
+                this.client.sendCommand("elevator","0")
+                this.client.sendCommand("aileron","0")
                 this.isTouchingJoystick = false
             }
         }

@@ -35,7 +35,7 @@ class Client {
                 val serverAddr: InetAddress = InetAddress.getByName(ip)
                 println("Connecting...")
                 this.socket = Socket()
-                this.socket.connect(InetSocketAddress(serverAddr, port), 10 * 1000)
+                this.socket.connect(InetSocketAddress(serverAddr, port))
                 println("Connected!")
                 this.outStream = this.socket.getOutputStream()
             } catch (e: Exception) {
