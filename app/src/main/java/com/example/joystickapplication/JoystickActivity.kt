@@ -98,12 +98,7 @@ class JoystickActivity : AppCompatActivity() {
      * @return true if the distance from the position to the center is less or equal to the radius, false otherwise
      */
     private fun isInsideJoystick(touchX: Float, touchY: Float): Boolean {
-        return this.distance(
-            touchX,
-            touchY,
-            this.joystickView.currX,
-            this.joystickView.currY
-        ) <= this.joystickView.innerRadius
+        return this.distance(touchX, touchY, this.joystickView.currX, this.joystickView.currY) <= this.joystickView.innerRadius
     }
 
     /**
@@ -143,19 +138,12 @@ class JoystickActivity : AppCompatActivity() {
      * @param distanceFromCenter - the distance from the center
      * @return the original position if its inside the joystick, otherwise a point on the outer circumference
      */
-    private fun getAdjustedPosition(
-        touchX: Float,
-        touchY: Float,
-        angle: Double,
-        distanceFromCenter: Float
-    ): Array<Float> {
+    private fun getAdjustedPosition(touchX: Float, touchY: Float, angle: Double, distanceFromCenter: Float): Array<Float> {
         if (distanceFromCenter + this.joystickView.innerRadius <= this.joystickView.outerRadius) {
             return arrayOf(touchX, touchY)
         }
-        val newX =
-            this.joystickView.centerX + cos(toRadians(angle)) * (joystickView.outerRadius - joystickView.innerRadius)
-        val newY =
-            this.joystickView.centerY + sin(toRadians(angle)) * (joystickView.outerRadius - joystickView.innerRadius)
+        val newX = this.joystickView.centerX + cos(toRadians(angle)) * (joystickView.outerRadius - joystickView.innerRadius)
+        val newY = this.joystickView.centerY + sin(toRadians(angle)) * (joystickView.outerRadius - joystickView.innerRadius)
         return arrayOf(newX.toFloat(), newY.toFloat())
     }
 
