@@ -1,4 +1,5 @@
 # FlightGear-Simulator-Android-App
+An Android application designed to fly a FlightGear aircraft using a custom joystick, 
 
 ### Prerequities
 * An Android environment to run the application
@@ -18,7 +19,7 @@ This will open two communication sockets - 'in' where you send commands to the s
 ## Flying the aircraft
 
 ### Connecting to the simulator
-Run the simulator and your application. A login window will appear where you can enter connection IP and port:
+Run the simulator, click the 'Fly!' icon on the bottom and run the application. A login window will appear where you can enter connection IP and port:
 
 ![Login Screen](https://user-images.githubusercontent.com/45856261/63440676-f2aac000-c438-11e9-968e-88a527ef226b.PNG)
 
