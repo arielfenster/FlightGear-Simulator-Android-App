@@ -1,6 +1,5 @@
-# FlightGear-Simulator-Android-App
-An Android application designed to fly a FlightGear aircraft using a custom joystick. <br/>
-Implmented using WPF technology and MVVM architecture.
+# FlightGear Simulator Android Application
+An Android application designed to fly a FlightGear aircraft using a custom joystick.
 
 ### Prerequities
 * An Android environment to run the application
